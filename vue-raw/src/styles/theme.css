@@ -1,0 +1,262 @@
+:root {
+--site-background: #fff;
+--site-orange: #FF9800;
+
+
+--site-white: #ffffff;
+--site-soft-white: #f4f4f4;
+--site-mute-white: #f2f2f2;
+
+--site-black: #000000;
+--site-soft-black: #181818;
+--site-mute-black: #222222;
+
+--site-stroke: #222222;
+--site-soft-stroke: #E1E1E1;
+--site-mute-stroke: #f2f2f2;
+}
+
+.dark-mode {
+--site-background: #000000;
+--site-orange: #FF9800;
+
+
+--site-white: #000000;
+--site-soft-white: #202020;
+--site-mute-white: #454444;
+
+--site-black: #ffffff;
+--site-soft-black: #dedede;
+--site-mute-black: #a2a2a2;
+
+--site-stroke: #fafafa;
+--site-soft-stroke: #a7a7a7;
+--site-mute-stroke: #282727;
+}
+
+* {
+margin: 0;
+padding: 0;
+list-style-type: none;
+font-family: "Quicksand", sans-serif;
+color: var(--site-black);
+}
+
+body {
+background-color: var(--site-background);
+}
+
+/* Css codes for entire app */
+input:focus, h3:focus, p:focus {outline: none;}
+div.todo-app {max-width: 728px;margin: 0px auto;margin-top: 25px; padding-bottom: 35px;}
+
+/* header */
+header {display: flex;flex-direction: column;gap: 5px;margin-bottom: 25px;position: sticky;top: 0;background-color: var(--site-white);padding: 10px;}
+header h1 {font-size: 24pt;}
+header div.add-task {display: flex;flex-direction: row;gap: 10px;cursor: pointer;margin: 10px 0;align-items: center;}
+header div.add-task img {width: 25px;height: 25px;object-fit: contain;opacity: 0.5;border-radius: 50%;}
+header div.add-task p {font-size: 12pt;color: var(--site-soft-black);}
+header div.add-task:hover img {opacity: 1;background-color: var(--site-orange);}
+header div.add-task:hover p {color: black;}
+
+/* write mode i.e. add new task */
+header.write div.input-box {display: block;}
+header.write div.add-task {display: none;}
+
+/* todo list */
+ul.todo-list {display: flex;flex-direction: column;}
+ul.todo-list li {display: flex;flex-direction: row;justify-content: space-between;padding: 15px 5px;border-bottom: 1px solid #e5e5e5;cursor: pointer;}
+ul.todo-list li:hover div.action {display: block;}
+ul.todo-list li:hover div.radio {border-color: blue;}
+ul.todo-list li div.radio {width: 20px;height: 20px;border: 1px solid #000;border-radius: 50%;margin-right: 15px;}
+ul.todo-list li div.content {flex: 1;display: flex;flex-direction: column;gap: 5px;}
+ul.todo-list li div.content h3 {font-size: 13pt;font-weight: normal;color: black;}
+ul.todo-list li div.content p {font-size: 10pt;color: #787878;}
+ul.todo-list li div.action {margin-left: 15px;display: flex;flex-direction: row;gap: 10px;display: none;}
+ul.todo-list li div.action img {width: 25px;height: 25px;opacity: 0.5;cursor: pointer;}
+
+/* todo list -- complete */
+ul.todo-list li.complete div.radio {background-color: #919191;background-image: url(./../images/completed.svg);background-repeat: no-repeat;background-size: cover;border: 1px solid #919191;}
+ul.todo-list li.complete div.content h3 {text-decoration: line-through;}
+
+/* todo list -- Edit mode */
+ul.todo-list li.edit {flex-direction: column;border: 1px solid #e5e5e5;padding: 25px 15px;border-radius: 7px;box-shadow: 0px 0px 40px #00000024;cursor: default;}
+ul.todo-list li.edit div.radio {display: none;}
+ul.todo-list li.edit div.action {display: none;}
+ul.todo-list li div.editaction  {display: none;justify-content: flex-end;padding: 15px 0;gap: 10px;border-top: 1px solid #e5efef;margin-top: 20px;}
+ul.todo-list li.edit div.editaction {display: flex;    }
+ul.todo-list li.edit div.editaction button {padding: 5px 15px;border-radius: 4px;border: none; cursor: pointer;}
+ul.todo-list li.edit h3 {cursor: text;}
+ul.todo-list li.edit p {cursor: text;}
+
+/* Input Box task input */
+div.input-box {border: 1px solid #ddd;padding: 15px;display: flex;border-radius: 7px;flex-direction: column;width: calc(100% - 32px);margin: 10px 0;}
+div.input {display: flex;flex-direction: column;gap: 5px;}
+div.input input {border: none;padding: 7px;font-size: 11pt;}
+div.input textarea {border: none;padding: 7px;font-size: 11pt; resize: none;}
+input:focus {outline: none;}
+textarea:focus {outline: none;}
+div.input-box div.button {display: flex;flex-direction: row;justify-content: flex-end;gap: 10px;border-top: 1px solid #ddd;padding-top: 15px;}
+div.input-box div.button button {font-size: 9pt;border: none;padding: 8px 15px;border-radius: 4px;color: #353535;cursor: pointer;}
+button.addbtn {background-color: var(--site-orange);color: white !important;}
+
+/* Empty task */
+div.empty-task {flex-direction: column;gap: 15px;border: none;display: flex;justify-content: center;align-items: center;}
+div.empty-task img {width: 320px;}
+div.empty-task p {margin: 0;width: 50%;text-align: center;font-size: 11pt;line-height: 16pt;color: #737373;}
+
+/* Search element */
+div.app-search {display: flex;justify-content: space-between; align-items: center;}
+div.app-search img {width: 25px;height: 25px;object-fit: contain;cursor: pointer;opacity: 0.6;}
+div.app-search img:hover {opacity: 1;}
+div.search-box {display: flex;justify-content: space-between;align-items: center;border: 1px solid #dddddd;border-radius: 4px;}
+div.search-box input {padding: 7px;border: none;}
+div.search-box img {width: 20px;height: 20px;padding: 8px;cursor: pointer; opacity: 0.6;}
+div.search-box img:hover {opacity: 1;}
+
+/* task loader */
+div.task-loader {display: flex;flex-direction: column;justify-content: center;align-items: center;height: 420px;}
+div.task-loader img {width: 155px;height: auto;}
+
+/* network status -- internet connection */
+div.networksts {position: absolute;background-color: black;border-radius: 5px;width: auto;top: 20px;left: 50%;border: 1px solid #b0b0b0;display: flex;flex-direction: row;justify-content: flex-start;gap: 8px;padding: 15px;}
+div.networksts p {color: white;}
+
+/* Notification */
+div.notification {position: absolute;background-color: black;border-radius: 5px;width: auto;bottom: 45px;left: 15px;border: 1px solid #b0b0b0;display: flex;flex-direction: row;justify-content: flex-start;gap: 8px;padding: 15px;}
+div.notification p {color: white;}
+
+/* delete modal */
+div.delete-box {display: flex;
+flex-direction: column;
+background-color: white;
+padding: 25px;
+border: 1px solid #a8a8a8;
+width: 450px;
+border-radius: 7px;
+box-shadow: 0px 10px 25px #0000004d;
+position: absolute;
+z-index: 99;
+top: 20%;
+left: calc(50% - 226px);
+gap: 25px;}
+div.delete-box div.close {align-self: flex-end;}
+div.delete-box div.close img {cursor: pointer;}
+div.delete-box div.action {display: flex;flex-direction: row;justify-content: flex-end;gap: 10px;}
+div.delete-box div.action button {padding: 5px 15px;border: none;cursor: pointer;}
+
+/* modal overlay */
+div.overlay {    position: absolute;
+top: 0;
+left: 0;
+background-color: #0000003b;
+z-index: 9;
+bottom: 0;
+right: 0;
+backdrop-filter: blur(2px);}
+
+.__error {
+    border-bottom: 2px solid red !important;
+    background-color: #ff000017;
+}
+
+/* bottom information */
+div.info {width: calc(100% - 20px);height: auto;padding: 10px;background-color: black;position: fixed;bottom: 0;display: flex;flex-direction: row;gap: 10px;}
+div.info a {color: white;font-size: 9pt;cursor: pointer;text-decoration: none;}
+div.info a:first-child::after {content: "";display: inline-block;width: 4px;height: 4px;background-color: white;border-radius: 50%;margin-left: 8px;}
+div.info a:hover {text-decoration: underline;}
+
+@media screen and (max-width: 728px) {
+div.todo-app {width: 90%;}
+}
+
+/* Skeleton loader */
+/* Skeletion */
+.skgreydark {
+background: linear-gradient(270deg, #ebebeb, #d7d7d7, #ebebeb);
+background-size: 600% 600%;
+-webkit-animation: sk-grey-dark 2s ease infinite;
+-moz-animation: sk-grey-dark 2s ease infinite;
+-o-animation: sk-grey-dark 2s ease infinite;
+animation: sk-grey-dark 2s ease infinite;
+}
+
+@-webkit-keyframes sk-grey-dark {
+0%{background-position:0% 50%}
+50%{background-position:100% 51%}
+100%{background-position:0% 50%}
+}
+@-moz-keyframes sk-grey-dark {
+0%{background-position:0% 50%}
+50%{background-position:100% 51%}
+100%{background-position:0% 50%}
+}
+@-o-keyframes sk-grey-dark {
+0%{background-position:0% 50%}
+50%{background-position:100% 51%}
+100%{background-position:0% 50%}
+}
+@keyframes sk-grey-dark {
+0%{background-position:0% 50%}
+50%{background-position:100% 51%}
+100%{background-position:0% 50%}
+}
+
+.skgreylight {
+background: linear-gradient(270deg, #ebebeb, #e6e6e6, #ebebeb);
+background-size: 600% 600%;
+
+-webkit-animation: sk-grey-light 2s ease infinite;
+-moz-animation: sk-grey-light 2s ease infinite;
+-o-animation: sk-grey-light 2s ease infinite;
+animation: sk-grey-light 2s ease infinite;
+
+}
+
+@-webkit-keyframes sk-grey-light {
+0%{background-position:0% 50%}
+50%{background-position:100% 51%}
+100%{background-position:0% 50%}
+}
+@-moz-keyframes sk-grey-light {
+0%{background-position:0% 50%}
+50%{background-position:100% 51%}
+100%{background-position:0% 50%}
+}
+@-o-keyframes sk-grey-light {
+0%{background-position:0% 50%}
+50%{background-position:100% 51%}
+100%{background-position:0% 50%}
+}
+@keyframes sk-grey-light {
+0%{background-position:0% 50%}
+50%{background-position:100% 51%}
+100%{background-position:0% 50%}
+}
+
+
+
+ul.skeletion {width: 100%;height: auto;margin: 0px auto;position: relative;}
+ul.skeletion li {width: auto;height: auto;overflow: hidden;margin-bottom: 15px;}
+
+/* small images */
+ul.skeletion li .sk-image {width: 50px;height: 50px;margin-right: 10px;float: left;}
+
+/* small icons */
+ul.skeletion li .sk-icon {width: 20px;height: 20px;margin-right: 10px;float: left;}
+
+/* content */
+ul.skeletion li .sk-content {width: calc(100% - 60px);height: auto;float: left;}
+
+ul.skeletion li .sk-image span {display: block;width: 100%;height: 100%;border-radius: 100%;}
+ul.skeletion li .sk-icon span {display: block;width: 100%;height: 100%;border-radius: 100%;}
+
+ul.skeletion li .sk-content .sk-title {width: 70%;height: auto;margin-top: 6px;}
+ul.skeletion li .sk-content .sk-title span {display: block;width: 100%;height: 15px;border-radius: 25px;}
+
+ul.skeletion li .sk-content .sk-title-long {width: 95%;height: auto;margin-top: 10px;}
+ul.skeletion li .sk-content .sk-title-long span {display: block;width: 100%;height: 12px;border-radius: 25px}
+
+.v-toast__item .v-toast__text {
+    color: white !important;
+}
