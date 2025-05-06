@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('slug')->nullable();
             $table->boolean('unread')->default(false);
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

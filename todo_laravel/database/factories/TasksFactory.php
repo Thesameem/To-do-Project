@@ -18,7 +18,7 @@ class TasksFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id'    =>fake()->numberBetween(1140,1150),
+            'user_id'    =>fake()->numberBetween(1140,1149),
             'title'      =>fake()->sentence(8),
             'description'=>fake()->paragraph(2),
         ];
