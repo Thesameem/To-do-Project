@@ -9,7 +9,8 @@ class Activity extends Model
     protected $fillable = [
         'user_id',
         'icon',
-        'detial',
+        'detail',
         'slug',
+        'unread',
     ];
 }

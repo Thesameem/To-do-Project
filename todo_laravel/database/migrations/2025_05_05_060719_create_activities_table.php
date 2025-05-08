@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('icon');
             $table->string('detail');
             $table->string('slug')->nullable();
-            $table->boolean('unread')->default(false);
+            $table->boolean('unread')->default(true);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

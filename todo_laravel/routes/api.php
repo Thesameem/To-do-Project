@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\TasksController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,21 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     //delete
     Route::delete('tasks/delete/{id}',[TasksController::class,'delete']);
+
+    //update task
+    Route::post('tasks/update/{id}',[TasksController::class,'updatetask']);
+
+    //list all activities
+    Route::get('/activities',[ActivityController::class,'list']);
+
+    //mark as read activities
+    Route::post('/activities/read/{id}',[ActivityController::class,'read']);
+    //delete acitivties
+    Route::delete('/activities/delete/{id}',[ActivityController::class,'delete']);
+
+
+
+
     
 });
 
