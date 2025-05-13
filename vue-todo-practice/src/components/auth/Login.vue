@@ -1,4 +1,5 @@
 <script setup>
+    import Cookie from '@/scripts/Cookie';
     import axios from 'axios';
     let emits = defineEmits(['signup']);
 
@@ -18,6 +19,8 @@
         //send post method to register user
         axios.post('http://127.0.0.1:8000/api/user/login',formData)
         .then(function(response){
+            let token=response.data.response.token;
+            Cookie=setcookie('to-do',token);
             console.log(response);
         });
     }
@@ -27,7 +30,7 @@
 </script>
 
 <template>
-    <div class="form">
+     <div class="form">
         <div class="lang">
             <select name="language">
                 <option value="English (USA)">English USA</option>
