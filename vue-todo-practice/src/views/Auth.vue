@@ -1,16 +1,26 @@
 <script setup>
-
-    import { ref } from 'vue';
-
+    import {useRouter} from 'vue-router';
+    import { ref ,onMounted} from 'vue';
+    import Cookie from '@/scripts/Cookie';
     import Login from './../components/auth/Login.vue';
     import Signup from './../components/auth/Signup.vue';
 
     let LoginPage = ref(true);
+    
+    let router = useRouter();
+
 
     const ShowSignupPage = () => {
         console.log ('here');
         LoginPage.value = false;
     }
+
+    onMounted(()=>{
+        let Token =Cookie.getCookie('todo-app');
+        if (Token) router.push({
+            path:'/'
+        })
+    })
 
 </script>
 

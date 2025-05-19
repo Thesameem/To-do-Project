@@ -1,7 +1,36 @@
 <script setup>
 
+    import { onMounted , ref } from 'vue';
+    import { useTodoStore } from '@/stores/Todo';
+import { GET } from '@/scripts/Fetch';
+
 
     let emits = defineEmits(['close']);
+
+    //pinia store
+    let TodoStore =useTodoStore();
+
+    let isLoading =ref(true);
+
+    const MarkAllNotification=async()=>{
+        TodoStore.Activities.map(activity=>{
+            activity.unread = false;
+            return activity;
+        });
+
+        let result= await GET('activities/read');
+
+    }
+
+    onMounted(async()=>{
+        let result = await GET('activities');
+        isLoading.value=false;
+
+        if(!result.error){
+            TodoStore.Activities = result.response;
+        };
+        
+    });
 
 </script>
 
@@ -21,7 +50,7 @@
         </div>
                     
         <div class="addition">
-            <div class="add-btnion">
+            <div class="add-btnion" @click="MarkAllNotification">
                 <img src="./../images/mark-read.svg" style="margin-right: 5px; width: 20px; height: 20px;">
                 <p>Mark all as read</p>
             </div>
@@ -29,8 +58,11 @@
     </div>
 
     <div class="notification-content">
-        <ul class="notifications">
-            <li class="unread">
+        <div class="loader" v-if="isLoading">
+            <img src="./../images/loader2.gif" alt="">
+        </div>
+        <ul v-else class="notifications">
+            <li class="activity.unread ? 'unread' : ''" v-for="activity in TodoStore.Activities" :key="activity.id">
                 <div class="image">
                     <div class="noticon">
                         <img src="./../images/notify-fill.svg">

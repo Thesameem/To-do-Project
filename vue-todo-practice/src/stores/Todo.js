@@ -12,5 +12,20 @@ export const useTodoStore = defineStore('todo', {
     
     actions: {
 
+        ReArrangeTasks(){
+            //re- arrange all task
+
+            const Incompleted =[];
+            const Completed = [];
+
+            this.TaskList.map(task =>{
+                if(task.completed) Completed.push(task);
+                else Incompleted.push(task);
+            });
+
+            const Arranged = Incompleted.concat(Completed);
+            this.TaskList =Arranged;
+        }
+
     },
   });

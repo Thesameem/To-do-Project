@@ -1,13 +1,19 @@
 <script setup>
-    import Cookie from '@/scripts/Cookie';
-    import axios from 'axios';
+import Cookie from '@/scripts/Cookie';
+    import { useTodoStore } from '@/stores/Todo'; 
+    import { useRouter } from 'vue-router';
+    import { POST } from '@/scripts/Fetch';
+
     let emits = defineEmits(['signup']);
 
     let email="";
     let password="";
 
 
-    const LogInUser=()=>{
+    const TodoStore=useTodoStore();
+    const router = useRouter();
+
+    const LogInUser=async()=>{
         //create form data to send to server
 
 
@@ -17,12 +23,15 @@
         formData.append('password',password);
 
         //send post method to register user
-        axios.post('http://127.0.0.1:8000/api/user/login',formData)
-        .then(function(response){
-            let token=response.data.response.token;
-            Cookie=setcookie('to-do',token);
-            console.log(response);
+      let result=await POST ('user/login',formData);
+      console.log(result);
+      if(!result.error){
+        Cookie.setCookie('todo-app',result.response.token,2);
+        TodoStore.user =result.response.user;
+        router.push({
+            path:'/'
         });
+      }
     }
 
     

@@ -8,6 +8,7 @@
     // vue notification toast
     import {useToast} from 'vue-toast-notification';
     import 'vue-toast-notification/dist/theme-sugar.css';
+import { GET, POST } from '@/scripts/Fetch';
 
     // pinia
     const TodoStore = useTodoStore();
@@ -46,7 +47,7 @@
     };
 
     // edit
-    const SaveData = () => {
+    const SaveData = async() => {
 
       // validation
       isTitleError.value = InputValidation (title, description);
@@ -64,23 +65,32 @@
         toast.success('Task Updated', {
           position: 'top',
         });
+
+
+        
+    let formData = new FormData();
+    formData.append('title',title);
+    formData.append('description',desctiption);
+
+    let result =  await POST('tasks/update' + props.task.id ,formData);
+    console.log(result);
     };
 
-    const CompleteToggle = () => {
+
+
+
+
+    const CompleteToggle = async() => {
       // first update the task
       props.task.completed = !props.task.completed;
 
-      // re-arrange all tasks
-      const Incompleted = [];
-      const Completed = [];
+      //re-arrage all task
+      TodoStore.ReArrangeTasks();
 
-      TodoStore.TaskList.map(task => {
-        if (task.completed) Completed.push(task);
-        else Incompleted.push(task);
-      });
+      //update to databse
 
-      const Arranged = Incompleted.concat(Completed);
-      TodoStore.TaskList = Arranged;
+      let result =await GET('tasks/complete/' + props.task.id);
+      console.log(result);
     }
 
 

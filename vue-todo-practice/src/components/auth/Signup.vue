@@ -1,12 +1,17 @@
 <script setup>
+    import { ref } from 'vue';
+    import { POST } from '@/scripts/Fetch';
 
-    import axios from 'axios';
     let emits = defineEmits(['login']);
     let Fullname="";
     let email="";
     let password="";
 
-    const RegisterUser=()=>{
+    let SignupError=ref(false);
+    let ErrorText =ref('Something went wrong');
+
+
+    const RegisterUser=async ()=>{
 
         //create form data to send to server
 
@@ -20,10 +25,13 @@
         formData.append('password',password);
 
         //send post method to register user
-        axios.post('http://127.0.0.1:8000/api/user/register',formData)
-        .then(function(response){
-            console.log(response);
-        });
+       let result =await POST ('user/register',formData);
+
+       if (!result.error) emits ('login');
+       else{
+        SignupError.value=true;
+        ErrorText.value=result.reason;
+       }
     }
 
 </script>
@@ -72,6 +80,7 @@
             </div>
 
             <div class="if-action">
+                <p v-if="SignupError" style="color:red" >{{ ErrorText }}</p>
                 <button class="primary" @click="RegisterUser">
                     <p>Create an account</p>
                 </button>

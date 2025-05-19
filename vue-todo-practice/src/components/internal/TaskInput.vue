@@ -8,6 +8,7 @@
     // vue notification toast
     import {useToast} from 'vue-toast-notification';
     import 'vue-toast-notification/dist/theme-sugar.css';
+import { POST } from '@/scripts/Fetch';
 
     const emit = defineEmits(['hide']);
 
@@ -23,7 +24,7 @@
         else return false;
     };
 
-    const AddTask = () => {
+    const AddTask = async() => {
         // validation
         isTitleError.value = InputValidation (Title, Description);
         if (isTitleError.value) return;
@@ -38,6 +39,11 @@
 
         // hide input box
         TodoStore.ShowInputBox = false;
+        let formData = new FormData();
+        formData.append('title' , Title);
+        formData.append('description',Description);
+        let result = await POST('tasks/create',formData);
+
 
         // show notification
         const toast = useToast();

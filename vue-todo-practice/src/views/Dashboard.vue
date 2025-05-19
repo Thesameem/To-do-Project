@@ -1,7 +1,12 @@
 <script setup>
     
-    import { ref } from 'vue';
+    import { ref ,onMounted} from 'vue';
+    import { useRouter } from 'vue-router';
+    import Cookie from '@/scripts/Cookie';
     import { useTodoStore } from './../stores/Todo';
+    import axios from 'axios';
+    import {GET} from '@/scripts/Fetch';
+    import { DELETE } from '@/scripts/Fetch';
 
     // vue notification toast
     import {useToast} from 'vue-toast-notification';
@@ -14,6 +19,8 @@
     import DeleteModal from './../components/DeleteModal.vue';
 
     import Activities from './../components/Activities.vue';
+
+    let router = useRouter();
 
     // pinia store
     const TodoStore = useTodoStore();
@@ -38,6 +45,8 @@
 
         // remove task
         TodoStore.TaskList.splice(index, 1);
+        //delete from database
+        let result = DELETE('tasks/delete/' + WantToDelete.value.id);
 
         // show notification
         const toast = useToast();
@@ -48,6 +57,24 @@
         // hide delete modal
         ShowDeleteModal.value = false;
     };
+
+
+
+    onMounted(async()=>{
+      let Token =Cookie.getCookie('todo-app');
+      if(!Token){
+        router.push ({
+          path:'/auth'
+        });
+        return;
+      }
+
+      let result = await GET('user/tasks');
+      if(!result.error) {
+        TodoStore.TaskList = result.response;
+        TodoStore.ReArrangeTasks();
+      }
+    });
 </script>
 
 <template>
