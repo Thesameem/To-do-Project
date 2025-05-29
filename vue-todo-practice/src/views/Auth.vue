@@ -1,25 +1,22 @@
 <script setup>
-    import {useRouter} from 'vue-router';
-    import { ref ,onMounted} from 'vue';
+
+    import { onMounted, ref } from 'vue';
+    import { useRouter } from 'vue-router';
     import Cookie from '@/scripts/Cookie';
+
     import Login from './../components/auth/Login.vue';
     import Signup from './../components/auth/Signup.vue';
 
     let LoginPage = ref(true);
-    
     let router = useRouter();
 
-
-    const ShowSignupPage = () => {
-        console.log ('here');
-        LoginPage.value = false;
-    }
-
-    onMounted(()=>{
-        let Token =Cookie.getCookie('todo-app');
+    // check if the user is already logged in
+    // route to dashboard if already logged in
+    onMounted(() => {
+        let Token = Cookie.getCookie('todo-app');
         if (Token) router.push({
-            path:'/'
-        })
+            path: '/'
+        });
     })
 
 </script>

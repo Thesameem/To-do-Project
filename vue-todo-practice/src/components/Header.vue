@@ -1,12 +1,8 @@
 <script setup>
 
-    // vue
-    import { ref } from 'vue';
+    // pinia store
     import { useTodoStore } from './../stores/Todo';
-
     const TodoStore = useTodoStore();
-
-    // scripts
 
     // components
     import AppSearch from './internal/AppSearch.vue';

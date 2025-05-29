@@ -1,45 +1,58 @@
 <script setup>
-import Cookie from '@/scripts/Cookie';
-    import { useTodoStore } from '@/stores/Todo'; 
+
+    import { ref } from 'vue';
     import { useRouter } from 'vue-router';
+    import { useTodoStore } from '@/stores/Todo';
+
+    import Cookie from '@/scripts/Cookie';
     import { POST } from '@/scripts/Fetch';
 
     let emits = defineEmits(['signup']);
 
-    let email="";
-    let password="";
+    let email = '';
+    let password = '';
+    let isRequesting = ref(false);
 
-
-    const TodoStore=useTodoStore();
+    const TodoStore = useTodoStore();
     const router = useRouter();
 
-    const LogInUser=async()=>{
-        //create form data to send to server
+    let SignupError = ref(false);
+    let ErrorText = ref('Something went wrong');
 
+    const LoginUser = async () => {
+        if (isRequesting.value) return;
+        
+        // validation
+        if (email.length < 3 || password < 8) {
+            SignupError.value = true;
+            ErrorText.value = "All fields are required!";
+            return;
+        }
 
+        // submit form
         let formData = new FormData();
+        formData.append('email', email);
+        formData.append('password', password);
 
-        formData.append('email',email);
-        formData.append('password',password);
-
-        //send post method to register user
-      let result=await POST ('user/login',formData);
-      console.log(result);
-      if(!result.error){
-        Cookie.setCookie('todo-app',result.response.token,2);
-        TodoStore.user =result.response.user;
-        router.push({
-            path:'/'
-        });
-      }
+        isRequesting.value = true;
+        let result = await POST('user/login', formData);
+        isRequesting.value = false;
+        if (!result.error) {
+            Cookie.setCookie('todo-app', result.response.token, 2);
+            TodoStore.user = result.response.user;
+            router.push({
+                path: '/'
+            });
+        }else {
+            SignupError.value = true;
+            ErrorText.value = result.reason;
+        }
     }
-
-    
 
 </script>
 
 <template>
-     <div class="form">
+    <div class="form">
         <div class="lang">
             <select name="language">
                 <option value="English (USA)">English USA</option>
@@ -75,8 +88,10 @@ import Cookie from '@/scripts/Cookie';
             </div>
 
             <div class="if-action">
-                <button class="primary" @click="LogInUser">
-                    <p>Log In</p>
+                <p v-if="SignupError" style="color: red;">{{ ErrorText }}</p>
+                <button class="primary" @click="LoginUser">
+                    <p v-if="!isRequesting">Sign to Dashboard</p>
+                    <img v-else src="./../../images/loader2.gif" />
                 </button>
             </div>
         </div>

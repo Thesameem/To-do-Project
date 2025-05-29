@@ -602,6 +602,14 @@ font-size: 14pt;
 font-weight: 500;
 letter-spacing: 0.25px;}
 
+div.notification-content div.loader {
+        display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 65vh;
+}
+div.notification-content div.loader img {width: 60px;}
+
 div.dash-header div.actions div.actbtn {    border: 1px solid #d9d9d9;
 padding: 6px 15px;
 background-color: white;

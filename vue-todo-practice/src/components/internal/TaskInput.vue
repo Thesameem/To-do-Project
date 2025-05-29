@@ -5,18 +5,18 @@
     import { onMounted, useTemplateRef } from 'vue';
     import { useTodoStore } from './../../stores/Todo';
 
+    import { POST } from '@/scripts/Fetch';
+
     // vue notification toast
-    import {useToast} from 'vue-toast-notification';
-    import 'vue-toast-notification/dist/theme-sugar.css';
-import { POST } from '@/scripts/Fetch';
+    import { ShowToast } from '@/scripts/Toast';
 
     const emit = defineEmits(['hide']);
 
     const TodoStore = useTodoStore();
 
     let Title = '';
-    let title = useTemplateRef('title');
     let Description = '';
+    let title = useTemplateRef('title');
     let isTitleError = ref(false);
 
     const InputValidation = (title, desc) => {
@@ -24,36 +24,45 @@ import { POST } from '@/scripts/Fetch';
         else return false;
     };
 
-    const AddTask = async() => {
+    const AddTask = async () => {
         // validation
         isTitleError.value = InputValidation (Title, Description);
         if (isTitleError.value) return;
 
         // update new task to store
         TodoStore.TaskList.unshift({
-            id: Math.floor(Math.random()*99999),
+            id: 0,
             title: Title,
-            description: Description,
+            description: Description == null ? '' : Description,
             completed: false
         });
 
         // hide input box
         TodoStore.ShowInputBox = false;
-        let formData = new FormData();
-        formData.append('title' , Title);
-        formData.append('description',Description);
-        let result = await POST('tasks/create',formData);
+        TodoStore.UnreadActivities += 1;
 
+        // add task to database
+        let formData = new FormData();
+        formData.append('title', Title);
+        formData.append('description', Description);
+
+        // create new task 
+        let result = await POST('task/create', formData);
+
+        // now update the real id of current task
+        let newId = result.response.id;
+        TodoStore.TaskList.map(task => {
+            if (task.id == 0) task.id = newId;
+            return task;
+        });
+        
 
         // show notification
-        const toast = useToast();
-        toast.success('Task Added Successfully!', {
-            position: 'top',
-        });
+        ShowToast('Task Added Successfully!', 'top');
         
     };
 
-    // mount
+    // focus the title input when component mounted
     onMounted(() => {
         title.value.focus();
     });

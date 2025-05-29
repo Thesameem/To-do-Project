@@ -1,16 +1,15 @@
 <script setup>
     
-    import { ref ,onMounted} from 'vue';
+    import { ref, onMounted } from 'vue';
     import { useRouter } from 'vue-router';
-    import Cookie from '@/scripts/Cookie';
     import { useTodoStore } from './../stores/Todo';
-    import axios from 'axios';
-    import {GET} from '@/scripts/Fetch';
-    import { DELETE } from '@/scripts/Fetch';
+
+    import Cookie from '@/scripts/Cookie';
+    import { DELETE, GET } from '@/scripts/Fetch'; // axios to delete and get request
+
 
     // vue notification toast
-    import {useToast} from 'vue-toast-notification';
-    import 'vue-toast-notification/dist/theme-sugar.css';
+    import { ShowToast } from '@/scripts/Toast';
 
     // components
     import Header from './../components/Header.vue';
@@ -18,25 +17,27 @@
     import EmptyTask from './../components/EmptyTask.vue';
     import DeleteModal from './../components/DeleteModal.vue';
 
+    // activities page
     import Activities from './../components/Activities.vue';
-
-    let router = useRouter();
 
     // pinia store
     const TodoStore = useTodoStore();
 
+    // router to navigate different urls
+    const router = useRouter();
+
+    // delete todos stuff
     let ShowDeleteModal = ref(false);
     let WantToDelete = ref({});
 
-  // show delete modal
+    // show delete modal
     const ShowDeleteBox = (task) => {
-
       WantToDelete.value = task;     
       ShowDeleteModal.value = true;
-
     };
 
-
+    // this function will be call after user click upon a 'delete' button from a model
+    // it will remove selected todo from store and from server as well.
     const DeleteTask = () => {
         // find task index
         let index = TodoStore.TaskList.findIndex(element => {
@@ -45,34 +46,39 @@
 
         // remove task
         TodoStore.TaskList.splice(index, 1);
-        //delete from database
-        let result = DELETE('tasks/delete/' + WantToDelete.value.id);
+        TodoStore.UnreadActivities += 1;
+
+        // delete from database
+        let result = DELETE('task/delete/' + WantToDelete.value.id);
 
         // show notification
-        const toast = useToast();
-        toast.success('Task Deleted', {
-          position: 'top',
-        });
+        ShowToast('Task Deleted', 'top');
 
         // hide delete modal
         ShowDeleteModal.value = false;
     };
 
-
-
-    onMounted(async()=>{
-      let Token =Cookie.getCookie('todo-app');
-      if(!Token){
-        router.push ({
-          path:'/auth'
-        });
+    // when the Dashboard component mounted
+    // This will check cookie for token, if not found navigate to /auth (login page)
+    // if token found, request will be made to list task and activities etc.
+    onMounted(async () => {
+      let Token = Cookie.getCookie('todo-app');
+      if (!Token) {
+        router.push({path: '/auth'});
         return;
       }
 
+      // get current user's tasks and activities and save to todo store
       let result = await GET('user/tasks');
-      if(!result.error) {
-        TodoStore.TaskList = result.response;
+      if (!result.error) {
+        TodoStore.TaskList = result.response.tasks;
+        TodoStore.Activities = result.response.activities;
         TodoStore.ReArrangeTasks();
+
+        // count total number of unread activities and notify user on bell icon
+        TodoStore.Activities.filter(activity => {
+          if (activity.unread) TodoStore.UnreadActivities += 1;
+        });
       }
     });
 </script>

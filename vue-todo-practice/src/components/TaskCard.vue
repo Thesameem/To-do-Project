@@ -3,12 +3,11 @@
     import { ref } from 'vue';
 
     import { useTodoStore } from './../stores/Todo';
+    import { GET, POST } from '@/scripts/Fetch';
 
 
     // vue notification toast
-    import {useToast} from 'vue-toast-notification';
-    import 'vue-toast-notification/dist/theme-sugar.css';
-import { GET, POST } from '@/scripts/Fetch';
+    import { ShowToast } from '@/scripts/Toast';
 
     // pinia
     const TodoStore = useTodoStore();
@@ -29,6 +28,7 @@ import { GET, POST } from '@/scripts/Fetch';
     let description = props.task.description;
     let isTitleError = ref(false);
 
+    // show edit model to the todo list
     const WantToEditTask = () => {
       TodoStore.TaskList = TodoStore.TaskList.filter(element => {
         if (props.task.id == element.id) {
@@ -41,13 +41,14 @@ import { GET, POST } from '@/scripts/Fetch';
       });
     }
 
+    // todo input validation with length
     const InputValidation = (title, desc) => {
         if (title.length <= 5) return true;
         else return false;
     };
 
     // edit
-    const SaveData = async() => {
+    const SaveData = () => {
 
       // validation
       isTitleError.value = InputValidation (title, description);
@@ -61,36 +62,32 @@ import { GET, POST } from '@/scripts/Fetch';
       props.task.edit = false;
 
       // show notification
-      const toast = useToast();
-        toast.success('Task Updated', {
-          position: 'top',
-        });
+      ShowToast('Task Updated!', 'top');
 
+      TodoStore.UnreadActivities += 1;
 
+      let formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      let result = POST('task/update/' + props.task.id, formData);
         
-    let formData = new FormData();
-    formData.append('title',title);
-    formData.append('description',desctiption);
-
-    let result =  await POST('tasks/update' + props.task.id ,formData);
-    console.log(result);
     };
 
-
-
-
-
-    const CompleteToggle = async() => {
+    // complete and incomplete todo 
+    const CompleteToggle = async () => {
       // first update the task
       props.task.completed = !props.task.completed;
 
-      //re-arrage all task
+      // re-arrange all tasks
       TodoStore.ReArrangeTasks();
 
-      //update to databse
+      TodoStore.UnreadActivities += 1;
 
-      let result =await GET('tasks/complete/' + props.task.id);
-      console.log(result);
+      // update to database
+      let result = await GET('task/complete/' + props.task.id);
+
+      // notify
+      ShowToast('Task Updated!', 'top');
     }
 
 
@@ -113,7 +110,7 @@ import { GET, POST } from '@/scripts/Fetch';
           <textarea v-model="description" placeholder="Description"></textarea>
         </div>
 
-        <!-- buttons to edit and delet task -->
+        <!-- buttons to edit and delete task -->
         <div class="action">
             <img @click="WantToEditTask" src="./../images/edit.svg" />
             <img @click="emit('delete', task)" src="./../images/delete.svg" />

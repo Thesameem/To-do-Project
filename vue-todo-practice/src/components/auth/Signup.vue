@@ -1,37 +1,42 @@
 <script setup>
+
     import { ref } from 'vue';
     import { POST } from '@/scripts/Fetch';
 
     let emits = defineEmits(['login']);
-    let Fullname="";
-    let email="";
-    let password="";
 
-    let SignupError=ref(false);
-    let ErrorText =ref('Something went wrong');
+    let fullname = '';
+    let email = '';
+    let password = '';
 
+    let SignupError = ref(false);
+    let ErrorText = ref('Something went wrong');
 
-    const RegisterUser=async ()=>{
+    const RegisterUser = async () => {
+        // validation
+        if (fullname.length < 3 || email.length < 3 || password < 8) {
+            SignupError.value = true;
+            ErrorText.value = "All fields are required!";
+            return;
+        } 
 
-        //create form data to send to server
-
-
+        // create form data to send to server
         let formData = new FormData();
+        let nameAry = fullname.split(' ');
+        formData.append('fname', nameAry[0]);
+        formData.append('lname', nameAry[1]);
+        formData.append('email', email);
+        formData.append('password', password);
 
-        let nameAry=Fullname.split(' ');
-        formData.append('fname',nameAry[0]);
-        formData.append('lname',nameAry[1]);
-        formData.append('email',email);
-        formData.append('password',password);
+        // send post method to register user
+        let result = await POST('user/register', formData);
+        
+        if (!result.error) emits('login');
+        else {
+            SignupError.value = true;
+            ErrorText.value = result.reason;
+        }
 
-        //send post method to register user
-       let result =await POST ('user/register',formData);
-
-       if (!result.error) emits ('login');
-       else{
-        SignupError.value=true;
-        ErrorText.value=result.reason;
-       }
     }
 
 </script>
@@ -57,7 +62,7 @@
                 <div class="i-field">
                     <label>Fullname</label>
                     <div class="field-input">
-                        <input type="text" placeholder="Jon Doe" v-model="Fullname">
+                        <input type="text" placeholder="Jon Doe" v-model="fullname">
                         <img src="./../../images/user.svg" alt="user">
                     </div>
                 </div>
@@ -80,7 +85,7 @@
             </div>
 
             <div class="if-action">
-                <p v-if="SignupError" style="color:red" >{{ ErrorText }}</p>
+                <p v-if="SignupError" style="color: red;">{{ ErrorText }}</p>
                 <button class="primary" @click="RegisterUser">
                     <p>Create an account</p>
                 </button>

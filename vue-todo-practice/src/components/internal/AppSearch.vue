@@ -1,19 +1,30 @@
 <script setup>
 
-    import { ref } from 'vue';
+    import { ref, useTemplateRef } from 'vue';
+    import { onClickOutside } from '@vueuse/core';
     import { useTodoStore } from './../../stores/Todo';
-    import axios from 'axios';
-    
 
+    import { useRouter } from 'vue-router';
+
+    import { GET } from '@/scripts/Fetch';
+    import Cookie from '@/scripts/Cookie';
+    
     let emits = defineEmits(['activity']);
 
     const TodoStore = useTodoStore();
+    const router = useRouter();
 
     let ShowSearch = ref(false);
     let UserModalFocus = ref(false);
 
     let Keyword = '';
 
+    const target = useTemplateRef('target')
+    onClickOutside(target, event => {
+        UserModalFocus.value = false;
+    });
+
+    // search todo list using title and description
     const StartSearching = () => {
         TodoStore.TaskList.map(element => {
             let title = element.title.toLowerCase();
@@ -23,16 +34,15 @@
             if (title.includes(toMatch) || desp.includes(toMatch)) element.matched = false;
             else element.matched = true;
         });
+    }   
+    
+    // logout the user and route to authentication page
+    const LogOut = () => {
+        let result = GET('user/logout/' + TodoStore.user.id);
+        Cookie.setCookie('todo-app', '', -1);
+        // location.reload();
+        router.push({path: '/auth'});
     }
-
-    // const LogOutUser=()=>{
-
-        //send post method to register user
-    //     axios.post('http://127.0.0.1:8000/api/user/logout')
-    //     .then(function(response){
-    //         console.log(response);
-    //     });
-    // }
 
 </script>
 
@@ -48,28 +58,29 @@
             </div>
 
             <div class="activity" @click="emits('activity')">
-                <span>2</span>
+                <span v-if="TodoStore.UnreadActivities > 0">{{ TodoStore.UnreadActivities }}</span>
                 <img src="./../../images/notification.svg" alt="activity">
             </div>
             <img src="./../../images/account.svg" alt="account" @click="UserModalFocus = true">
             
-            <div class="profile-pop" v-if="UserModalFocus">
+            <div class="profile-pop" v-if="UserModalFocus" ref="target">
                 <div class="user">
-                    <div class="avatar"><h2>J</h2></div>
-                    <h3>Jon Doe</h3>
-                    <p>jon.doe@gmail.com</p>
+                    <div class="avatar"><h2>{{ TodoStore.user.fname[0].toUpperCase() }}</h2></div>
+                    <h3>{{ TodoStore.user.fname + ' ' + TodoStore.user.lname }}</h3>
+                    <p>{{ TodoStore.user.email }}</p>
                 </div>
                 <ul class="user-menu">
-                    <li @click="UserModalFocus = false">
+                    <li>
                         <img src="./../../images/settings.svg" />
                         <h4>Settings</h4>
                     </li>
-                    <li @click="UserModalFocus = false">
-                        <img src="./../../images/logout.svg" @click="LogOutUser"/>
+                    <li @click="LogOut">
+                        <img src="./../../images/logout.svg" />
                         <h4>Log Out</h4>
                     </li>
                 </ul>
             </div>   
+
         </div>
     </div>
 </template>
